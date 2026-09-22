@@ -1,36 +1,99 @@
 use leptos::prelude::*;
 
-use crate::components::{
-    player::{PlayerSeat, Seat},
-    trick::TrickArea,
-};
+use crate::game::{GameState, Seat};
+
+use super::hand::Hand;
+use super::trick::TrickArea;
 
 #[component]
-pub fn BridgeTable() -> impl IntoView {
+pub fn Table(state: GameState) -> impl IntoView {
+    let north_player = state
+        .players
+        .iter()
+        .find(|p| p.seat == Seat::North)
+        .cloned();
+
+    let west_player = state
+        .players
+        .iter()
+        .find(|p| p.seat == Seat::West)
+        .cloned();
+
+    let east_player = state
+        .players
+        .iter()
+        .find(|p| p.seat == Seat::East)
+        .cloned();
+
     view! {
         <div class="bridge-table">
 
-            <PlayerSeat
-                seat=Seat::North
-                name="North".to_string()
-            />
+            <div class="seat north">
+                {
+                    match north_player {
+                        Some(player) => view! {
+                            <div class="player-label">
+                                {player.name}
+                            </div>
+                        }.into_any(),
+                        None => view! {
+                            <div class="player-label">
+                                "North"
+                            </div>
+                        }.into_any(),
+                    }
+                }
+            </div>
 
-            <PlayerSeat
-                seat=Seat::West
-                name="West".to_string()
-            />
+            <div class="seat west">
+                {
+                    match west_player {
+                        Some(player) => view! {
+                            <div class="player-label">
+                                {player.name}
+                            </div>
+                        }.into_any(),
+                        None => view! {
+                            <div class="player-label">
+                                "West"
+                            </div>
+                        }.into_any(),
+                    }
+                }
+            </div>
 
-            <TrickArea/>
+            <div class="center-trick">
+                <div class="player-label">
+                    "Current Trick"
+                </div>
 
-            <PlayerSeat
-                seat=Seat::East
-                name="East".to_string()
-            />
+                <TrickArea />
+            </div>
 
-            <PlayerSeat
-                seat=Seat::South
-                name="You".to_string()
-            />
+            <div class="seat east">
+                {
+                    match east_player {
+                        Some(player) => view! {
+                            <div class="player-label">
+                                {player.name}
+                            </div>
+                        }.into_any(),
+                        None => view! {
+                            <div class="player-label">
+                                "East"
+                            </div>
+                        }.into_any(),
+                    }
+                }
+            </div>
+
+            <div class="seat south">
+                <div class="player-label">
+                    "You"
+                </div>
+
+                <Hand cards=state.my_hand />
+            </div>
 
         </div>
     }

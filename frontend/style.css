@@ -238,3 +238,212 @@ button {
         width: 60px;
     }
 }
+
+.hand {
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+
+    width: 100%;
+
+    padding: 16px 24px;
+
+    overflow-x: auto;
+}
+
+.hand .playing-card {
+    margin-left: -20px;
+    flex-shrink: 0;
+
+    transition:
+        transform 120ms ease,
+        margin 120ms ease;
+}
+
+.hand .playing-card:first-child {
+    margin-left: 0;
+}
+
+.hand .playing-card:hover {
+    transform: translateY(-18px);
+    z-index: 10;
+}
+
+.hand .playing-card img {
+    width: 95px;
+    height: auto;
+    display: block;
+}
+
+.bridge-table {
+    position: relative;
+
+    width: 100%;
+    min-height: 700px;
+
+    border-radius: 28px;
+
+    background: #145c35;
+
+    overflow: hidden;
+}
+
+.seat {
+    position: absolute;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.north {
+    top: 20px;
+    left: 50%;
+
+    transform: translateX(-50%);
+}
+
+.south {
+    bottom: 10px;
+    left: 50%;
+
+    transform: translateX(-50%);
+
+    width: 90%;
+}
+
+.west {
+    left: 20px;
+    top: 50%;
+
+    transform: translateY(-50%);
+}
+
+.east {
+    right: 20px;
+    top: 50%;
+
+    transform: translateY(-50%);
+}
+
+.center-trick {
+    position: absolute;
+
+    left: 50%;
+    top: 50%;
+
+    transform: translate(-50%, -50%);
+
+    width: 300px;
+    height: 220px;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+
+.card-back {
+    width: 42px;
+    height: 58px;
+
+    border-radius: 5px;
+
+    background:
+        repeating-linear-gradient(
+            45deg,
+            #173b68 0,
+            #173b68 3px,
+            #234f85 3px,
+            #234f85 6px
+        );
+
+    border: 2px solid #eee;
+
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.35);
+}
+
+
+.opponent {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+}
+
+.player-name {
+    font-weight: 600;
+}
+
+.opponent-cards {
+    display: flex;
+    justify-content: center;
+}
+
+.opponent-cards .card-back {
+    margin-left: -25px;
+}
+
+.opponent-cards .card-back:first-child {
+    margin-left: 0;
+}
+
+.card-count {
+    font-size: 0.8rem;
+    opacity: 0.7;
+}
+
+.trick {
+    position: relative;
+
+    width: 280px;
+    height: 220px;
+
+    margin: auto;
+}
+
+.trick-card {
+    position: absolute;
+
+    width: 90px;
+
+    z-index: 2;
+}
+
+.trick-card .playing-card {
+    margin: 0;
+}
+
+.trick-card img {
+    width: 90px;
+}
+
+
+
+.trick-card.north-card {
+    top: 0;
+    left: 50%;
+
+    transform: translateX(-50%);
+}
+
+.trick-card.south-card {
+    bottom: 0;
+    left: 50%;
+
+    transform: translateX(-50%);
+}
+
+.trick-card.west-card {
+    left: 0;
+    top: 50%;
+
+    transform: translateY(-50%);
+}
+
+.trick-card.east-card {
+    right: 0;
+    top: 50%;
+
+    transform: translateY(-50%);
+}

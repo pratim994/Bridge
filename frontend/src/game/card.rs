@@ -1,15 +1,6 @@
 use serde::{Deserialize, Serialize};
-
-#[derive(
-    Debug,
-    Clone,
-    Copy,
-    PartialEq,
-    Eq,
-    Hash,
-    Serialize,
-    Deserialize,
-)]
+use leptos::prelude::*;
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub enum Suit {
     Clubs,
     Diamonds,
@@ -20,33 +11,24 @@ pub enum Suit {
 impl Suit {
     pub fn symbol(self) -> &'static str {
         match self {
-            Suit::Clubs => "♣",
-            Suit::Diamonds => "♦",
-            Suit::Hearts => "♥",
-            Suit::Spades => "♠",
+            Self::Clubs => "♣",
+            Self::Diamonds => "♦",
+            Self::Hearts => "♥",
+            Self::Spades => "♠",
         }
     }
 
-    pub fn code(self) -> &'static str {
+    pub fn filename(self) -> &'static str {
         match self {
-            Suit::Clubs => "c",
-            Suit::Diamonds => "d",
-            Suit::Hearts => "h",
-            Suit::Spades => "s",
+            Self::Clubs => "clubs",
+            Self::Diamonds => "diamonds",
+            Self::Hearts => "hearts",
+            Self::Spades => "spades",
         }
     }
 }
 
-#[derive(
-    Debug,
-    Clone,
-    Copy,
-    PartialEq,
-    Eq,
-    Hash,
-    Serialize,
-    Deserialize,
-)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub enum Rank {
     Two,
     Three,
@@ -64,35 +46,26 @@ pub enum Rank {
 }
 
 impl Rank {
-    pub fn code(self) -> &'static str {
+    pub fn filename(self) -> &'static str {
         match self {
-            Rank::Two => "2",
-            Rank::Three => "3",
-            Rank::Four => "4",
-            Rank::Five => "5",
-            Rank::Six => "6",
-            Rank::Seven => "7",
-            Rank::Eight => "8",
-            Rank::Nine => "9",
-            Rank::Ten => "t",
-            Rank::Jack => "j",
-            Rank::Queen => "q",
-            Rank::King => "k",
-            Rank::Ace => "a",
+            Self::Two => "2",
+            Self::Three => "3",
+            Self::Four => "4",
+            Self::Five => "5",
+            Self::Six => "6",
+            Self::Seven => "7",
+            Self::Eight => "8",
+            Self::Nine => "9",
+            Self::Ten => "10",
+            Self::Jack => "jack",
+            Self::Queen => "queen",
+            Self::King => "king",
+            Self::Ace => "ace",
         }
     }
 }
 
-#[derive(
-    Debug,
-    Clone,
-    Copy,
-    PartialEq,
-    Eq,
-    Hash,
-    Serialize,
-    Deserialize,
-)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub struct Card {
     pub rank: Rank,
     pub suit: Suit,
@@ -101,9 +74,21 @@ pub struct Card {
 impl Card {
     pub fn asset_path(self) -> String {
         format!(
-            "/components/cards/{}{}.svg",
-            self.rank.code(),
-            self.suit.code()
+            "/components/cards/{}_of_{}.png",
+            self.rank.filename(),
+            self.suit.filename()
         )
+    }
+}
+#[component]
+pub fn CardBack() -> impl IntoView {
+    view! {
+        <div class="card-back">
+            <img
+                src="/components/cards/card_back.png"
+                alt="Card back"
+                draggable="false"
+            />
+        </div>
     }
 }
