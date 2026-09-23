@@ -1,4 +1,4 @@
-use super::{Card, Suit};
+use super::{Card, Rank, Suit};
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum Seat {
@@ -6,6 +6,26 @@ pub enum Seat {
     East,
     South,
     West,
+}
+
+impl Seat {
+    pub fn label(self) -> &'static str {
+        match self {
+            Seat::North => "North",
+            Seat::East => "East",
+            Seat::South => "South",
+            Seat::West => "West",
+        }
+    }
+
+    pub fn short_label(self) -> &'static str {
+        match self {
+            Seat::North => "N",
+            Seat::East => "E",
+            Seat::South => "S",
+            Seat::West => "W",
+        }
+    }
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -16,11 +36,24 @@ pub enum Turn {
     West,
 }
 
+impl Turn {
+    pub fn seat(self) -> Seat {
+        match self {
+            Turn::North => Seat::North,
+            Turn::East => Seat::East,
+            Turn::South => Seat::South,
+            Turn::West => Seat::West,
+        }
+    }
+}
+
 #[derive(Debug, Clone)]
 pub struct Player {
     pub id: String,
     pub name: String,
     pub seat: Seat,
+    pub connected: bool,
+    pub card_count: usize,
 }
 
 #[derive(Debug, Clone)]
@@ -31,25 +64,18 @@ pub struct PlayedCard {
 
 #[derive(Debug, Clone)]
 pub struct GameState {
-    /// Server/client state version.
-    ///
-    /// This will become important once state updates
-    /// arrive over WebSocket.
     pub version: u64,
-
+    pub room_id: String,
     pub players: Vec<Player>,
-
     pub my_seat: Seat,
-
     pub my_hand: Vec<Card>,
-
     pub current_turn: Turn,
-
     pub current_trick: Vec<PlayedCard>,
-
     pub contract: Option<String>,
-
     pub trump: Option<Suit>,
+    pub declarer: Option<Seat>,
+    pub tricks_won: u8,
+    pub tricks_required: u8,
 }
 
 impl GameState {
@@ -57,26 +83,32 @@ impl GameState {
         Self {
             version: 0,
 
+            room_id: "DEMO".into(),
+
             players: vec![
                 Player {
                     id: "north".into(),
                     name: "North".into(),
                     seat: Seat::North,
+                    connected: true,
                 },
                 Player {
                     id: "east".into(),
                     name: "East".into(),
                     seat: Seat::East,
+                    connected: true,
                 },
                 Player {
                     id: "south".into(),
                     name: "You".into(),
                     seat: Seat::South,
+                    connected: true,
                 },
                 Player {
                     id: "west".into(),
                     name: "West".into(),
                     seat: Seat::West,
+                    connected: true,
                 },
             ],
 
@@ -84,66 +116,90 @@ impl GameState {
 
             my_hand: vec![
                 Card {
-                    rank: super::Rank::Ace,
+                    rank: Rank::Ace,
                     suit: Suit::Spades,
                 },
                 Card {
-                    rank: super::Rank::King,
+                    rank: Rank::King,
                     suit: Suit::Spades,
                 },
                 Card {
-                    rank: super::Rank::Queen,
+                    rank: Rank::Queen,
                     suit: Suit::Spades,
                 },
                 Card {
-                    rank: super::Rank::Ten,
+                    rank: Rank::Ten,
                     suit: Suit::Spades,
                 },
                 Card {
-                    rank: super::Rank::Nine,
+                    rank: Rank::Nine,
                     suit: Suit::Spades,
                 },
                 Card {
-                    rank: super::Rank::Ace,
+                    rank: Rank::Ace,
                     suit: Suit::Hearts,
                 },
                 Card {
-                    rank: super::Rank::Jack,
+                    rank: Rank::Jack,
                     suit: Suit::Hearts,
                 },
                 Card {
-                    rank: super::Rank::Seven,
+                    rank: Rank::Seven,
                     suit: Suit::Hearts,
                 },
                 Card {
-                    rank: super::Rank::Ace,
+                    rank: Rank::Ace,
                     suit: Suit::Diamonds,
                 },
                 Card {
-                    rank: super::Rank::Eight,
+                    rank: Rank::Eight,
                     suit: Suit::Diamonds,
                 },
                 Card {
-                    rank: super::Rank::Four,
+                    rank: Rank::Four,
                     suit: Suit::Diamonds,
                 },
                 Card {
-                    rank: super::Rank::King,
+                    rank: Rank::King,
                     suit: Suit::Clubs,
                 },
                 Card {
-                    rank: super::Rank::Three,
+                    rank: Rank::Three,
                     suit: Suit::Clubs,
                 },
             ],
 
             current_turn: Turn::South,
 
-            current_trick: vec![],
+            current_trick: Vec::new(),
 
             contract: Some("4♥".into()),
 
             trump: Some(Suit::Hearts),
+
+            declarer: Some(Seat::South),
+
+            tricks_won: 3,
+
+            tricks_required: 10,
         }
+    }
+
+    pub fn current_player(&self) -> Option<&Player> {
+        let seat = self.current_turn.seat();
+
+        self.players
+            .iter()
+            .find(|player| player.seat == seat)
+    }
+
+    pub fn is_my_turn(&self) -> bool {
+        self.current_turn.seat() == self.my_seat
+    }
+
+    pub fn player_at(&self, seat: Seat) -> Option<&Player> {
+        self.players
+            .iter()
+            .find(|player| player.seat == seat)
     }
 }

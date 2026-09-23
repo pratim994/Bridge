@@ -1,15 +1,15 @@
 use leptos::prelude::*;
 
-use crate::game::GameState;
 use crate::components::table::Table;
+use crate::game::{GameSession, GameState};
 
 #[component]
 pub fn App() -> impl IntoView {
-    let game = GameState::demo();
+    let session = GameSession::new(GameState::demo());
 
     view! {
         <main class="app">
-            <Table state=game />
+            <Table session=session />
         </main>
     }
 }

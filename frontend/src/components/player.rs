@@ -1,29 +1,19 @@
 use leptos::prelude::*;
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum Seat {
-    North,
-    East,
-    South,
-    West,
-}
-
-impl Seat {
-    pub fn label(self) -> &'static str {
-        match self {
-            Seat::North => "North",
-            Seat::East => "East",
-            Seat::South => "South",
-            Seat::West => "West",
-        }
-    }
-}
+use crate::game::Seat;
 
 #[component]
 pub fn PlayerSeat(
     seat: Seat,
     name: String,
+    #[prop(optional)] connected: bool,
 ) -> impl IntoView {
+    let connection_class = if connected {
+        "player-status connected"
+    } else {
+        "player-status disconnected"
+    };
+
     view! {
         <div class=format!(
             "player-seat player-{}",
@@ -32,7 +22,10 @@ pub fn PlayerSeat(
             <div class="player-name">
                 {name}
             </div>
+
+            <div class=connection_class>
+                {if connected { "Online" } else { "Offline" }}
+            </div>
         </div>
     }
 }
-    

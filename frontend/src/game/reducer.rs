@@ -39,3 +39,17 @@ pub fn reduce(
         GameEvent::Error { .. } => {}
     }
 }
+
+GameEvent::CardPlayed {
+    player_id,
+    card,
+} => {
+    if player_id == &my_player_id {
+        state.my_hand.retain(|c| *c != card);
+    }
+
+    state.current_trick.push(PlayedCard {
+        player_id: player_id.clone(),
+        card: *card,
+    });
+}

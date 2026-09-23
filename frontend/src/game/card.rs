@@ -1,5 +1,6 @@
 use serde::{Deserialize, Serialize};
 use leptos::prelude::*;
+
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub enum Suit {
     Clubs,
@@ -80,6 +81,7 @@ impl Card {
         )
     }
 }
+
 #[component]
 pub fn CardBack() -> impl IntoView {
     view! {

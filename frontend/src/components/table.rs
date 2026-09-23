@@ -1,65 +1,29 @@
 use leptos::prelude::*;
 
-use crate::game::{GameState, Seat};
+use crate::game::{GameSession, Seat};
 
 use super::hand::Hand;
 use super::trick::TrickArea;
 
 #[component]
-pub fn Table(state: GameState) -> impl IntoView {
-    let north_player = state
-        .players
-        .iter()
-        .find(|p| p.seat == Seat::North)
-        .cloned();
-
-    let west_player = state
-        .players
-        .iter()
-        .find(|p| p.seat == Seat::West)
-        .cloned();
-
-    let east_player = state
-        .players
-        .iter()
-        .find(|p| p.seat == Seat::East)
-        .cloned();
-
+pub fn Table(
+    session: GameSession,
+) -> impl IntoView {
     view! {
         <div class="bridge-table">
 
             <div class="seat north">
-                {
-                    match north_player {
-                        Some(player) => view! {
-                            <div class="player-label">
-                                {player.name}
-                            </div>
-                        }.into_any(),
-                        None => view! {
-                            <div class="player-label">
-                                "North"
-                            </div>
-                        }.into_any(),
-                    }
-                }
+                <PlayerLabel
+                    session=session
+                    seat=Seat::North
+                />
             </div>
 
             <div class="seat west">
-                {
-                    match west_player {
-                        Some(player) => view! {
-                            <div class="player-label">
-                                {player.name}
-                            </div>
-                        }.into_any(),
-                        None => view! {
-                            <div class="player-label">
-                                "West"
-                            </div>
-                        }.into_any(),
-                    }
-                }
+                <PlayerLabel
+                    session=session
+                    seat=Seat::West
+                />
             </div>
 
             <div class="center-trick">
@@ -67,24 +31,14 @@ pub fn Table(state: GameState) -> impl IntoView {
                     "Current Trick"
                 </div>
 
-                <TrickArea />
+                <TrickArea session=session />
             </div>
 
             <div class="seat east">
-                {
-                    match east_player {
-                        Some(player) => view! {
-                            <div class="player-label">
-                                {player.name}
-                            </div>
-                        }.into_any(),
-                        None => view! {
-                            <div class="player-label">
-                                "East"
-                            </div>
-                        }.into_any(),
-                    }
-                }
+                <PlayerLabel
+                    session=session
+                    seat=Seat::East
+                />
             </div>
 
             <div class="seat south">
@@ -92,9 +46,39 @@ pub fn Table(state: GameState) -> impl IntoView {
                     "You"
                 </div>
 
-                <Hand cards=state.my_hand />
+                <Hand session=session />
             </div>
 
         </div>
     }
+}
+
+#[component]
+fn PlayerLabel(
+    session: GameSession,
+    seat: Seat,
+) -> impl IntoView {
+    view! {
+        <div class="player-label">
+            {move || {
+                session
+                    .state
+                    .get()
+                    .player_at(seat)
+                    .map(|player| player.name.clone())
+                    .unwrap_or_else(|| seat.label().to_string())
+            }}
+        </div>
+    }
+}
+
+
+fn is_turn(seat: Seat, turn: Turn) -> bool {
+    matches!(
+        (seat, turn),
+        (Seat::North, Turn::North)
+            | (Seat::East, Turn::East)
+            | (Seat::South, Turn::South)
+            | (Seat::West, Turn::West)
+    )
 }

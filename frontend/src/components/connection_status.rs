@@ -1,27 +1,30 @@
 use leptos::prelude::*;
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum ConnectionState {
-    Connecting,
-    Connected,
-    Reconnecting,
-    Disconnected,
-}
+use crate::network::reconnect::ConnectionState;
 
 #[component]
-pub fn ConnectionStatus() -> impl IntoView {
-    let state = ConnectionState::Connected;
-
-    let label = match state {
-        ConnectionState::Connecting => "Connecting",
-        ConnectionState::Connected => "Connected",
-        ConnectionState::Reconnecting => "Reconnecting",
-        ConnectionState::Disconnected => "Disconnected",
+pub fn ConnectionStatus(
+    #[prop(default = ConnectionState::Connected)]
+    state: ConnectionState,
+) -> impl IntoView {
+    let (label, class_name) = match state {
+        ConnectionState::Disconnected => {
+            ("Disconnected", "connection disconnected")
+        }
+        ConnectionState::Connecting => {
+            ("Connecting...", "connection connecting")
+        }
+        ConnectionState::Connected => {
+            ("Connected", "connection connected")
+        }
+        ConnectionState::Reconnecting => {
+            ("Reconnecting...", "connection reconnecting")
+        }
     };
 
     view! {
-        <div class="connection-status">
-            <span class="status-dot"></span>
+        <div class=class_name>
+            <span class="connection-dot"></span>
             <span>{label}</span>
         </div>
     }

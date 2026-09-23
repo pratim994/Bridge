@@ -32,4 +32,25 @@ pub enum GameEvent {
     Error {
         message: String,
     },
+    BidPlaced {
+        player_id: String,
+        bid: Bid,
+    },
+
+    TurnChanged {
+        turn: Turn,
+    },
+
+    TrickCompleted {
+        winner: String,
+    },
+
+    GameStarted,
+
+    GameCompleted,
+    ChatMessage {
+    player_id: String,
+    player_name: String,
+    message: String,
+},
 }
