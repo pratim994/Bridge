@@ -1,5 +1,11 @@
 use serde::{Deserialize, Serialize};
 
+use super::{
+    card::Card,
+    commands::Bid,
+    state::{Player, Seat, Turn},
+};
+
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(tag = "type")]
 pub enum GameEvent {
@@ -9,17 +15,25 @@ pub enum GameEvent {
         state: serde_json::Value,
     },
 
+    #[serde(rename = "hand_dealt")]
+    HandDealt {
+        version: u64,
+        hand: Vec<Card>,
+        card_counts: [u8; 4],
+    },
+
     #[serde(rename = "card_played")]
     CardPlayed {
         version: u64,
         player_id: String,
-        card: String,
+        seat: Seat,
+        card: Card,
     },
 
     #[serde(rename = "player_joined")]
     PlayerJoined {
         version: u64,
-        player_id: String,
+        player: Player,
     },
 
     #[serde(rename = "player_left")]
@@ -28,29 +42,57 @@ pub enum GameEvent {
         player_id: String,
     },
 
+    PlayerReady {
+        version: u64,
+        player_id: String,
+        ready: bool,
+    },
+
     #[serde(rename = "error")]
     Error {
         message: String,
     },
     BidPlaced {
+        version: u64,
         player_id: String,
         bid: Bid,
     },
 
     TurnChanged {
+        version: u64,
         turn: Turn,
     },
 
-    TrickCompleted {
-        winner: String,
+    StartTrick {
+        version: u64,
+        leader: Seat,
     },
 
-    GameStarted,
+    TrickCompleted {
+        version: u64,
+        winner: Seat,
+    },
 
-    GameCompleted,
+    ScoreUpdated {
+        version: u64,
+        north_south: u32,
+        east_west: u32,
+    },
+
+    GameStarted {
+        version: u64,
+    },
+
+    GameCompleted {
+        version: u64,
+    },
+    #[serde(rename = "game_finished")]
+    GameFinished {
+        version: u64,
+    },
     ChatMessage {
-    player_id: String,
-    player_name: String,
-    message: String,
-},
+        player_id: String,
+        player_name: String,
+        message: String,
+    },
 }

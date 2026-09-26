@@ -1,3 +1,4 @@
+pub mod bidding;
 pub mod card;
 pub mod chat;
 pub mod connection_status;
